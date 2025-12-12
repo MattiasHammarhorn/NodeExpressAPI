@@ -1,0 +1,14 @@
+{
+  "name": "nodeexpressapi",
+  "version": "1.0.0",
+  "description": "A simple test for using fetch APIs with NodeJS and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "MattHamm",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
