@@ -58,3 +58,17 @@ export async function updateUser(id, firstName, lastName) {
         })
     });
 }
+
+export async function deleteUser(id) {
+    var sql = "DELETE FROM users WHERE id = " + id;
+    return new Promise((resolve, reject) => {
+        db.exec(sql, (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                console.log(row);
+                resolve(row);
+            }
+        });
+    });
+}

@@ -1,6 +1,6 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-import { getAllUsers, getUserById, createUser, updateUser } from './userService.js';
+import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from './userService.js';
 
 const app = express();
 const port = 3000;
@@ -31,6 +31,16 @@ app.put('/api/users/:id', async (req, res) => {
         res.sendStatus(404);
 
     var result = await updateUser(user.id, req.body.firstName, req.body.lastName);
+    res.status(204).send(result);
+});
+
+app.delete('/api/users/:id', async (req, res) => {
+    var user = await getUserById(req.params.id);
+
+    if (user == null || user == undefined)
+        res.sendStatus(404);
+
+    var result = await deleteUser(user.id);
     res.status(204).send(result);
 });
 
