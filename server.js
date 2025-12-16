@@ -1,5 +1,6 @@
-const express = require('express');
-const sqlite3 = require('sqlite3');
+import express from 'express';
+import sqlite3 from 'sqlite3';
+import { getAllUsers, getUserById, createUser, updateUser } from './userService.js';
 
 const app = express();
 const port = 3000;
@@ -9,53 +10,28 @@ app.use(express.json());
 const db = new sqlite3.Database('sampleDB.db', sqlite3.OPEN_READWRITE);
 
 app.get('/api/users/', async (req, res) => {
-    let data = [];
-    await db.all("SELECT * FROM users", (err, rows) => {
-        if (err) {
-            throw err;
-        } else {
-            rows.forEach(row => {
-                console.log(row);
-                data.push(row);
-            });
-        res.send(data);
-        }
-    });
+    const users = await getAllUsers();
+    res.status(200).send(users);
 });
 
 app.get('/api/users/:id', async (req, res) => {
-    var userId = req.params.id;
-    await db.get("SELECT * FROM users WHERE id == " + userId, (err, row) => {
-        if (err) {
-            throw err;
-        } else {
-            console.log(row);
-            res.send(row);
-        }
-    });
+    const user = await getUserById(req.params.id);
+    res.status(200).send(user);
 });
 
 app.post('/api/users/', async (req, res) => {
-    await db.run("INSERT INTO users (firstName, lastName) VALUES ('" + req.body.firstName + "', '" + req.body.lastName + "');", (err, row) => {
-        if (err) {
-            throw(err);
-        } else {
-            console.log(row);
-            res.send(row);
-        }
-    });
+    const result = await createUser(req.body.firstName, req.body.lastName);
+    res.status(201).send(result);
 });
 
 app.put('/api/users/:id', async (req, res) => {
-    var userId = req.params.id;
-    await db.run("UPDATE users SET firstName = '" + req.body.firstName + "', lastName = '" + req.body.lastName + "' WHERE id == " + userId + ";", (err, row) => {
-        if (err) {
-            throw(err);
-        } else {
-            console.log(row);
-            res.send(row);
-        }
-    });
+    var user = await getUserById(req.params.id);
+
+    if (user == null || user == undefined)
+        res.sendStatus(404);
+
+    var result = await updateUser(user.id, req.body.firstName, req.body.lastName);
+    res.status(204).send(result);
 });
 
 app.listen(port, () => {
