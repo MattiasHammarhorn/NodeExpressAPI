@@ -16,6 +16,10 @@ app.get('/api/users/', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
     const user = await getUserById(req.params.id);
+
+    if (user == null || user == undefined)
+        return res.sendStatus(404);
+
     res.status(200).send(user);
 });
 
@@ -28,7 +32,7 @@ app.put('/api/users/:id', async (req, res) => {
     var user = await getUserById(req.params.id);
 
     if (user == null || user == undefined)
-        res.sendStatus(404);
+        return res.sendStatus(404);
 
     var result = await updateUser(user.id, req.body.firstName, req.body.lastName);
     res.status(204).send(result);
@@ -38,7 +42,7 @@ app.delete('/api/users/:id', async (req, res) => {
     var user = await getUserById(req.params.id);
 
     if (user == null || user == undefined)
-        res.sendStatus(404);
+        return res.sendStatus(404);
 
     var result = await deleteUser(user.id);
     res.status(204).send(result);

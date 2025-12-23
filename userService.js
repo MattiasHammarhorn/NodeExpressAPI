@@ -18,9 +18,9 @@ export async function getAllUsers() {
 }
 
 export async function getUserById(id) {
-    var sql = "SELECT * FROM users WHERE id == " + id;
+    var sql = "SELECT * FROM users WHERE id == ?";
     return new Promise((resolve, reject) => {
-        db.get(sql, (err, row) => {
+        db.get(sql, [id], (err, row) => {
             if (err) {
                 reject(err);
             } else {
@@ -32,42 +32,51 @@ export async function getUserById(id) {
 }
 
 export async function createUser(firstName, lastName) {
-    var sql = "INSERT INTO users (firstName, lastName) VALUES ('" + firstName + "', '" + lastName + "');";
+    var sql = "INSERT INTO users (firstName, lastName) VALUES (?, ?);";
     return new Promise((resolve, reject) => {
-        db.exec(sql, (err, row) => {
+        db.run(sql, [firstName, lastName], function (err) {
             if (err) {
                 reject(err);
             } else {
-                console.log(row);
-                resolve('User created!');
+                console.log(this);
+                resolve({
+                    message: 'User created!',
+                    id: this.lastID
+                });
             }
         });
     });
 }
 
 export async function updateUser(id, firstName, lastName) {
-    var sql = "UPDATE users SET firstName = '" + firstName + "', lastName = '" + lastName + "' WHERE id == " + id + ";";
+    var sql = "UPDATE users SET firstName = ?, lastName = ? WHERE id = ?;";
     return new Promise((resolve, reject) => {
-        db.exec(sql, (err, row) => {
+        db.run(sql, [firstName, lastName, id], function(err) {
             if (err) {
                 reject(err);
             } else {
-                console.log(row);
-                resolve('User updated!');
+                console.log(this);
+                resolve({
+                    message: (this.changes < 0 ? 'User updated!' : 'User not found!'),
+                    updatedRows: this.changes
+                });
             }
         })
     });
 }
 
 export async function deleteUser(id) {
-    var sql = "DELETE FROM users WHERE id = " + id;
+    var sql = "DELETE FROM users WHERE id = ?";
     return new Promise((resolve, reject) => {
-        db.exec(sql, (err, row) => {
+        db.run(sql, [id], function(err) {
             if (err) {
                 reject(err);
             } else {
-                console.log(row);
-                resolve(row);
+                console.log(this);
+                resolve({
+                    message: (this.changes > 0 ? 'User deleted!' : 'User not found!'),
+                    deletedRows: this.changes
+                });
             }
         });
     });
