@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(express.static('public'));
 
 const db = new sqlite3.Database('sampleDB.db', sqlite3.OPEN_READWRITE);
 
