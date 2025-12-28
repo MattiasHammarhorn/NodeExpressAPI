@@ -5,12 +5,15 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "author": "MattHamm",
   "license": "MIT",
   "dependencies": {
     "express": "^5.2.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vitest": "^4.0.16"
   }
 }

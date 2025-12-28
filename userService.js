@@ -57,7 +57,7 @@ export async function updateUser(id, firstName, lastName) {
             } else {
                 console.log(this);
                 resolve({
-                    message: (this.changes < 0 ? 'User updated!' : 'User not found!'),
+                    message: (this.changes > 0 ? 'User updated!' : 'User not found!'),
                     updatedRows: this.changes
                 });
             }
