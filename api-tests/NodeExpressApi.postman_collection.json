@@ -1,0 +1,315 @@
+{
+	"info": {
+		"_postman_id": "d6963d2f-8d31-44ab-b57d-cb1f4856fefa",
+		"name": "NodeExpressApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19483992"
+	},
+	"item": [
+		{
+			"name": "POST Users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var myJson = {\r",
+							"    \"firstName\": \"User\",\r",
+							"    \"lastName\": \"Userson\"\r",
+							"};\r",
+							"\r",
+							"var myJsonString = JSON.stringify(myJson);\r",
+							"\r",
+							"pm.environment.set('my-json-string', myJsonString);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201', function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{my-json-string}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const user = pm.response.json();\r",
+							"\r",
+							"pm.test('Status code is 200', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('User have required fields', function() {\r",
+							"    pm.expect(user).to.have.property('id');\r",
+							"    pm.expect(user).to.have.property('firstName');\r",
+							"    pm.expect(user).to.have.property('lastName');\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT User by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 204', function() {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var myJson = {\r",
+							"    \"firstName\": \"EditerUser\",\r",
+							"    \"lastName\": \"EditerUserson\"\r",
+							"};\r",
+							"\r",
+							"var myJsonString = JSON.stringify(myJson);\r",
+							"\r",
+							"pm.environment.set('my-json-string', myJsonString);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{my-json-string}}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE User by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 204', function() {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const users = pm.response.json();\r",
+							"\r",
+							"pm.test('Status code is 200', function() {\r",
+							"    pm.response.to.be.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Response is an array', function() {\r",
+							"    pm.expect(users).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test('Users have required fields', function() {\r",
+							"    for (let user of users) {\r",
+							"        pm.expect(user).to.have.property('id');\r",
+							"        pm.expect(user).to.have.property('firstName');\r",
+							"        pm.expect(user).to.have.property('lastName');\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
