@@ -84,7 +84,7 @@ async function deleteUser(userId) {
     const url = "/api/users/";
     try {
         await fetch(url + userId, { method: 'DELETE'})
-            .then(resp => resp.json())
+            .then(resp => console.log(resp))
             .then(loadUsers());
     } catch (Error) {
         console.error(`Error fetching ${url}, ${Error}`);
