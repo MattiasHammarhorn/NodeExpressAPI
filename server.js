@@ -11,42 +11,62 @@ app.use(express.static('public'));
 const db = new sqlite3.Database('sampleDB.db', sqlite3.OPEN_READWRITE);
 
 app.get('/api/users/', async (req, res) => {
-    const users = await getAllUsers();
-    res.status(200).send(users);
+    try {
+        const users = await getAllUsers();
+        res.status(200).json(users);
+    } catch (Error) {
+        res.status(500).json(Error);
+    }
 });
 
 app.get('/api/users/:id', async (req, res) => {
-    const user = await getUserById(req.params.id);
+    try {
+        const user = await getUserById(req.params.id);
 
-    if (user == null || user == undefined)
-        return res.sendStatus(404);
+        if (user == null || user == undefined)
+            return res.status(404).json('Message: user not found!');
 
-    res.status(200).send(user);
+        res.status(200).json(user);
+    } catch (Error) {
+        res.status(500).json(Error);
+    }
 });
 
 app.post('/api/users/', async (req, res) => {
-    const result = await createUser(req.body.firstName, req.body.lastName);
-    res.status(201).send(result);
+    try {
+        const result = await createUser(req.body.firstName, req.body.lastName);
+        res.status(201).send(result);
+    } catch (Error) {
+        res.status(500).send(Error);
+    }
 });
 
 app.put('/api/users/:id', async (req, res) => {
-    var user = await getUserById(req.params.id);
+    try {
+        var user = await getUserById(req.params.id);
 
-    if (user == null || user == undefined)
-        return res.sendStatus(404);
+        if (user == null || user == undefined)
+            return res.status(404).json('Message: user not found!');
 
-    var result = await updateUser(user.id, req.body.firstName, req.body.lastName);
-    res.status(204).send(result);
+        var result = await updateUser(user.id, req.body.firstName, req.body.lastName);
+        res.status(204).json(result);
+    } catch (Error) {
+        res.status(500).json(Error);
+    }
 });
 
 app.delete('/api/users/:id', async (req, res) => {
-    var user = await getUserById(req.params.id);
+    try {
+        var user = await getUserById(req.params.id);
 
-    if (user == null || user == undefined)
-        return res.sendStatus(404);
+        if (user == null || user == undefined)
+            return res.status(404).json('Message: user not found!');
 
-    var result = await deleteUser(user.id);
-    res.status(204).send(result);
+        var result = await deleteUser(user.id);
+        res.status(204).json(result);
+    } catch (Error) {
+        res.status(500).json(Error);
+    }
 });
 
 app.listen(port, () => {

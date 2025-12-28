@@ -1,27 +1,99 @@
 const userForm = document.getElementById('userForm');
 const userList = document.getElementById('userList');
 
-var id = 1;
-
-var sampleUsers = [
-    { 'id': id++, 'firstName': 'Anders', 'lastName': 'Gustavsson' },
-    { 'id': id++, 'firstName': 'Bogdan', 'lastName': 'Hadzic' },
-    { 'id': id++, 'firstName': 'Imran', 'lastName': 'Seyidoglu' }
-];
-
 var isEditingUser = false;
+var users = [];
 
 window.addEventListener('load', () => {
     loadUsers();
     userForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        addUser();
+        submitUser();
     })
 })
 
-function loadUsers() {
+async function loadUsers() {
+    const url = '/api/users/';
+    try {
+        const response = await fetch(url, { method: 'GET' });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch '/api/events'. Status: ${response.response}`);
+        }
+
+        users = await response.json();
+        populateUserList();
+    } catch (error) {
+        console.error(`Error fetching ${url}, ${error}`);
+    }
+}
+
+async function submitUser() {
+    const url = '/api/users/';
+    let formData = new FormData(userForm);
+
+    let data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName')
+    }
+    
+    if (!isEditingUser) {
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(resp => resp.json())
+                .then(() => {
+                    loadUsers();
+                    resetForm();
+                });
+        } catch (error) {
+            console.error(`Error fetching ${url}, ${error}`);
+        }
+    } else if (isEditingUser) {
+        try {
+            await fetch(url + formData.get('userId'), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(resp => resp.json())
+                .then(() => {
+                    isEditingUser = false;
+                    resetForm();
+                    loadUsers();
+                });
+        } catch (error) {
+            console.error(`Error fetching ${url}, ${error}`);
+        }
+    }
+}
+
+function editUser(userId) {
+    let user = users.find((u) => u.id == userId);
+    if (user != null || user != undefined) {
+        isEditingUser = true;
+        document.getElementById('userId').value = user.id;
+        document.getElementById('firstName').value = user.firstName;
+        document.getElementById('lastName').value = user.lastName;
+    }
+}
+
+async function deleteUser(userId) {
+    const url = "/api/users/";
+    try {
+        await fetch(url + userId, { method: 'DELETE'})
+            .then(resp => resp.json())
+            .then(loadUsers());
+    } catch (Error) {
+        console.error(`Error fetching ${url}, ${Error}`);
+    }
+}
+
+function populateUserList() {
     userList.innerHTML = '';
-    for (let user of sampleUsers) {
+    for (let user of users) {
         let userCard = document.createElement('div');
         userCard.innerHTML += `<li>Id: ${user.id}</li>
             <li>First name: ${user.firstName}</li>
@@ -38,47 +110,9 @@ function loadUsers() {
         let editBtn = document.createElement('button');
         editBtn.innerHTML = 'EDIT';
         editBtn.addEventListener('click', (e) => {
-            editUser(user.id);
-        })
+            editUser(user.id);            })
         userCard.appendChild(editBtn);
     }
-}
-
-function addUser() {
-    let formData = new FormData(userForm);
-    
-    if (!isEditingUser) {
-        let newUser = {
-            id: id++,
-            firstName: formData.get('firstName'),
-            lastName: formData.get('lastName')
-        } 
-        sampleUsers.push(newUser);
-        resetForm();
-    } else if (isEditingUser) {
-        let user = sampleUsers.find((u) => u.id == formData.get('userId'));
-        user.firstName = formData.get('firstName'); 
-        user.lastName = formData.get('lastName'); 
-        isEditingUser = false;
-        resetForm();
-    }
-    loadUsers();
-}
-
-function editUser(userId) {
-    let user = sampleUsers.find((u) => u.id == userId);
-    if (user != null || user != undefined) {
-        isEditingUser = true;
-        document.getElementById('userId').value = user.id;
-        document.getElementById('firstName').value = user.firstName;
-        document.getElementById('lastName').value = user.lastName;
-    }
-}
-
-function deleteUser(userId) {
-    let userIndex = sampleUsers.findIndex((u) => u.id == userId);
-    sampleUsers = sampleUsers.toSpliced(userIndex, 1);
-    loadUsers();
 }
 
 function resetForm() {
